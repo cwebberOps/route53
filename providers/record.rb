@@ -82,7 +82,7 @@ def current_resource_record_set
       type: current[:type],
       ttl: current[:ttl],
       resource_records:
-        current[:resource_records].sort.map{ |rrr| rrr.to_h }
+        current[:resource_records].sort_by { |rr| rr.value }.map{ |rrr| rrr.to_h }
     }
   else
     {}
@@ -116,7 +116,7 @@ action :create do
   require 'aws-sdk'
 
   if current_resource_record_set == resource_record_set
-    Chef::Log.debug "Current resources match specification"
+    Chef::Log.info "Record has not changed, skipping"
   else
     if overwrite?
       change_record "UPSERT"
